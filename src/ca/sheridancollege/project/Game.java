@@ -1,9 +1,11 @@
 /**
  * SYST 17796 Project Base code.
  * Students can modify and extend to implement their game.
- * Game.java modified by Divyanshu Verma (991758829)!
+ * Game.java modified by Divyanshu Verma (991758829) -TechBrains-!
  */
 package ca.sheridancollege.project;
+
+// @author Divyanshu Verma Oct 2024
 
 import java.util.ArrayList;
 
