@@ -1,58 +1,106 @@
 /**
  * SYST 17796 Project Base code.
  * Students can modify and extend to implement their game.
- * Add your name as an author and the date!
+ * Game.java modified by Divyanshu Verma (991758829)!
  */
 package ca.sheridancollege.project;
 
 import java.util.ArrayList;
 
-/**
- * The class that models your game. You should create a more specific child of this class and instantiate the methods
- * given.
- *
- * @author dancye
- * @author Paul Bonenfant Jan 2020
- */
-public abstract class Game {
+// Game.java
+import java.util.Scanner;
 
-    private final String name;//the title of the game
-    private ArrayList<Player> players;// the players of the game
+public class Game {
+    private GroupOfCards deck;
+    private Player player;
+    private Player dealer;
 
-    public Game(String name) {
-        this.name = name;
-        players = new ArrayList();
+    public Game(String playerName) {
+        deck = new GroupOfCards();
+        initializeDeck();
+        deck.shuffle();
+        player = new Player(playerName);
+        dealer = new Player("Dealer");
     }
 
-    /**
-     * @return the name
-     */
-    public String getName() {
-        return name;
+    private void initializeDeck() {
+        for (Suit suit : Suit.values()) {
+            for (Rank rank : Rank.values()) {
+                deck.addCard(new Card(suit, rank));
+            }
+        }
     }
 
-    /**
-     * @return the players of this game
-     */
-    public ArrayList<Player> getPlayers() {
-        return players;
+    public void start() {
+        dealInitialCards();
+        Scanner scanner = new Scanner(System.in);
+
+        System.out.println(player);
+        System.out.println(dealer);
+
+        boolean playerTurn = true;
+
+        while (playerTurn) {
+            System.out.print("Do you want to hit or stand? (hit/stand): ");
+            String action = scanner.nextLine();
+
+            if (action.equalsIgnoreCase("hit")) {
+                player.addCard(deck.drawCard());
+                System.out.println(player);
+                if (player.hasBusted()) {
+                    System.out.println("You bust! Dealer wins.");
+                    return;
+                }
+            } else if (action.equalsIgnoreCase("stand")) {
+                playerTurn = false;
+            } else {
+                System.out.println("Invalid action. Please choose hit or stand.");
+            }
+        }
+
+        // Dealer's turn
+        while (dealer.getHandValue() < 17) {
+            dealer.addCard(deck.drawCard());
+        }
+
+        System.out.println(dealer);
+
+        // Determine winner
+        determineWinner();
+        scanner.close();
     }
 
-    /**
-     * @param players the players of this game
-     */
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
+    private void dealInitialCards() {
+        for (int i = 0; i < 2; i++) {
+            player.addCard(deck.drawCard());
+            dealer.addCard(deck.drawCard());
+        }
     }
 
-    /**
-     * Play the game. This might be one method or many method calls depending on your game.
-     */
-    public abstract void play();
+    private void determineWinner() {
+        int playerValue = player.getHandValue();
+        int dealerValue = dealer.getHandValue();
 
-    /**
-     * When the game is over, use this method to declare and display a winning player.
-     */
-    public abstract void declareWinner();
+        System.out.println("Your total: " + playerValue);
+        System.out.println("Dealer's total: " + dealerValue);
 
-}//end class
+        if (dealerValue > 21 || playerValue > dealerValue) {
+            System.out.println("You win!");
+        } else if (playerValue < dealerValue) {
+            System.out.println("Dealer wins!");
+        } else {
+            System.out.println("It's a tie!");
+        }
+    }
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Enter your name: ");
+        String playerName = scanner.nextLine();
+
+        Game game = new Game(playerName);
+        game.start();
+
+        scanner.close();
+    }
+}
