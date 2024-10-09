@@ -1,7 +1,7 @@
 /**
  * SYST 17796 Project Base code.
  * Students can modify and extend to implement their game.
- * Add your name as an author and the date!
+ * GroupOfCards.java modified by Anupreet Kaur (991752090) -TechBrains-!
  */
 package ca.sheridancollege.project;
 
@@ -13,43 +13,55 @@ import java.util.Collections;
  * once. The group of cards has a maximum size attribute which is flexible for reuse.
  *
  * @author dancye
- * @author Paul Bonenfant Jan 2020
+ * @author Anupreet Kaur
  */
 public class GroupOfCards {
-
-    //The group of cards, stored in an ArrayList
     private ArrayList<Card> cards;
-    private int size;//the size of the grouping
 
-    public GroupOfCards(int size) {
-        this.size = size;
+    public GroupOfCards() {
+        cards = new ArrayList<>();
     }
 
-    /**
-     * A method that will get the group of cards as an ArrayList
-     *
-     * @return the group of cards.
-     */
-    public ArrayList<Card> getCards() {
-        return cards;
+    public void addCard(Card card) {
+        cards.add(card);
+    }
+
+    public Card removeCard(int index) {
+        return cards.remove(index);
+    }
+
+    public Card drawCard() {
+        return cards.remove(cards.size() - 1);
     }
 
     public void shuffle() {
         Collections.shuffle(cards);
     }
 
-    /**
-     * @return the size of the group of cards
-     */
-    public int getSize() {
-        return size;
+    public int getValue() {
+        int value = 0;
+        int aces = 0;
+
+        for (Card card : cards) {
+            value += card.getValue();
+            if (card.getRank() == Rank.ACE) {
+                aces++;
+            }
+        }
+
+        while (value > 21 && aces > 0) {
+            value -= 10; // Count ACE as 1 instead of 11
+            aces--;
+        }
+        return value;
     }
 
-    /**
-     * @param size the max size for the group of cards
-     */
-    public void setSize(int size) {
-        this.size = size;
+    public int size() {
+        return cards.size();
     }
 
-}//end class
+    @Override
+    public String toString() {
+        return cards.toString();
+    }
+}
